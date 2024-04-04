@@ -11,6 +11,18 @@ import (
 )
 
 func main() {
+
+	child := []string{
+	"cmd", 
+	"config", 
+	"handler", 
+	"middleware", 
+	"migrations", 
+	"model", 
+	"repository", 
+	"service",
+}
+
 	var newFolder strings.Builder
 
 	// replace with your src directory
@@ -39,9 +51,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	pathToNewFolder := fmt.Sprintf("%s/%s", str, "main.go")
+	i := len(child) - 1
 
-	err = os.WriteFile(pathToNewFolder, []byte(""), os.ModePerm)
+	for len(child) > 0 {
+		err := os.Mkdir(fmt.Sprintf("%s/%s", str, child[i]), os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+			continue
+		}
+		child = child[:len(child)-1]
+		i--
+	}
+
+	pathToNewFolder := fmt.Sprintf("%s/cmd/%s", str, "main.go")
+
+	err = os.WriteFile(pathToNewFolder, []byte("package main"), os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 	}
