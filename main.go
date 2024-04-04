@@ -6,15 +6,15 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
 func main() {
-
 	var newFolder strings.Builder
 
-	goPath := fmt.Sprintf("%s/", os.Getenv("GOPATH"))
-	log.Println(goPath)
+	// replace with your src directory
+	goPath := fmt.Sprintf("%s/src/", os.Getenv("GOPATH"))
 
 	fmt.Fprintf(&newFolder, "%s", goPath)
 
@@ -27,6 +27,10 @@ func main() {
 
 	// Remove newline character
 	fileName = strings.TrimSpace(fileName)
+
+	// regex 1 or more whitespace
+	reWhtSp := regexp.MustCompile(`[\s\p{Zs}]{1,}`)
+	fileName = reWhtSp.ReplaceAllString(fileName, "-")
 
 	newFolder.WriteString(fileName)
 	str := newFolder.String()
@@ -42,7 +46,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cmd := exec.Command("go", "mod", "init", fileName)
+	cmd := exec.Command("go", "mod", "init", fmt.Sprintf("golang.org/x/%s", fileName))
 
 	// set dir of executeable cmd
 	cmd.Dir = str
